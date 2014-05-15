@@ -142,6 +142,6 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('build', ['jshint', 'less', 'concat']);
 	grunt.registerTask('prod', ['build', 'uglify', 'cssmin', 'copy']);
-	grunt.registerTask('default', ['build', 'watch']); // Called by default when starting grunt
+	grunt.registerTask('default', ['prod', 'watch']); // Called by default when starting grunt
 
 }

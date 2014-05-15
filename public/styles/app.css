@@ -5792,6 +5792,7 @@ button.close {
 *********************************************************************************/
 body {
   padding-top: 50px;
+  background: red;
 }
 .starter-template {
   padding: 40px 15px;
