@@ -2,22 +2,23 @@
 $(document).foundation();
 
 $(function() {
+    console.log('jeej het werkt!');
+    console.log('jeej het werkt!');
+    console.log('jeej het werkt!');
     
-    alert('fff');
+    // signin
+    $("#additionalParticipantsAdd").click(function(e) {
+        e.preventDefault();
 
-	// JS Code
+        var container = $("#additionalParticipants");
 
-	// Example script. (Just delete if you don't need it.)
-	// $('#elementID').animate({
-	// 	'cssProp': 'value'
-	// }, {
-	// 	duration: 500,
-	// 	// special easing needs jQuery ui. Cool easing samples can be found here: http://easings.net/
-	// 	specialEasing: {
-	// 		'cssProp': 'easing'
-	// 	},
-	// 	complete: function() {
-	// 		// script to run on complete
-	// 	}
-	// });
+        $.getJSON("/tools/required/get_additional_participants",
+            function(data) {
+                if (data.error) {
+                    alert("Er is iets misgegaan met het toevoegen van een nieuwe ontvanger.");
+                } else {
+                    container.append(data.html);
+                }
+            });
+    });
 });

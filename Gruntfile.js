@@ -6,6 +6,7 @@ module.exports = function (grunt) {
 
     // Configurable paths
     var config = {
+        app: '',
         dist: 'public/'
     };
 
@@ -18,10 +19,9 @@ module.exports = function (grunt) {
 
         /******************************************************************
          *
-         *	Compiling the Less files
+         *    Compiling the Less files
          *
          ******************************************************************/
-
 
         jshint: {
             options: {
@@ -49,15 +49,16 @@ module.exports = function (grunt) {
             },
             js: {
                 src: [
-                    'bower_components/jquery/dist/jquery.js',
-                    'bower_components/bootstrap/dist/js/bootstrap.js',
+                    'bower_components/modernizr/modernizr.js',
+                    'bower_components/foundation/js/foundation.js',
                     'scripts/**/*.js',
                 ],
                 dest: '<%= config.dist %>/scripts/app.js'
             },
             css: {
                 src: [
-                    'bower_components/bootstrap/dist/css/bootstrap.css',
+                    'bower_components/foundation/css/normalize.css',
+                    'bower_components/foundation/css/foundation.css',
                     '<%= config.dist %>/styles/app.css',
                 ],
                 dest: '<%= config.dist %>/styles/app.css'
@@ -79,27 +80,41 @@ module.exports = function (grunt) {
             }
         },
 
-        copy: {
+        // The following *-min tasks produce minified files in the dist folder
+        imagemin: {
             prod: {
                 files: [{
                     expand: true,
-                    dot: true,
-                    cwd: '',
-                    dest: '<%= config.dist %>',
-                    src: [
-                        '*.{ico,txt}',
-                        '.htaccess',
-                        'images/{,*/}*.{gif,webp}',
-                        'styles/fonts/*'
-                    ]
+                    cwd: 'images',
+                    src: '{,*/}*.{gif,jpeg,jpg,png}',
+                    dest: '<%= config.dist %>/images'
                 }]
+            }
+        },
+
+        copy: {
+            prod: {
+                files: [
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '',
+                        dest: '<%= config.dist %>',
+                        src: [
+                            '*.{ico,txt}',
+                            '.htaccess',
+                            'images/{,*/}*.webp',
+                            'styles/fonts/*'
+                        ]
+                    }
+                ]
             }
         },
 
 
         /******************************************************************
          *
-         *	Watch looks for changes in the file, and runs a specific task when there is a change.
+         *    Watch looks for changes in the file, and runs a specific task when there is a change.
          *
          ******************************************************************/
 
@@ -116,15 +131,23 @@ module.exports = function (grunt) {
             },
             css: {
                 files: ['styles/*.less'],
-                tasks: ['less']
+                tasks: ['less', 'concat']
             },
-            js: {
-                files: ['scripts/{,*/}*.js'],
+            scripts: {
+                files: ['scripts/**/*.js'],
+                tasks: ['jshint', 'concat'],
+                options: {
+                    spawn: false,
+                    livereload: true
+                }
+            },
+            html: {
+                files: '**.html',
                 options: {
                     livereload: true
                 }
             }
-        },
+        }
 
     });
 
@@ -135,9 +158,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-imagemin');
 
     grunt.registerTask('build', ['jshint', 'less', 'concat']);
-    grunt.registerTask('prod', ['build', 'uglify', 'cssmin', 'copy']);
-    grunt.registerTask('default', ['prod', 'watch']); // Called by default when starting grunt
+    grunt.registerTask('prod', ['build', 'uglify', 'cssmin', 'imagemin', 'copy']);
+    grunt.registerTask('default', ['build', 'watch']); // Called by default when starting grunt
 
 }
